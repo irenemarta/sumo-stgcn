@@ -1,6 +1,9 @@
 import torch.nn as nn
+import torch.nn.functional as F
 import torch_geometric.nn as tgn
 
+
+# https://pytorch-geometric.readthedocs.io/en/latest/get_started/introduction.html#data-handling-of-graphs
 
 class GCN(nn.Module):
     def __init__(self, hidden_dims: int, dropout_prob: float):
@@ -16,7 +19,8 @@ class GCN(nn.Module):
             nn.Sequential(
                 nn.LayerNorm(hidden_dims[i+1]),
                 nn.ReLu(),
-                nn.Dropout(p=dropout_prob)
+                nn.Dropout(p=dropout_prob),
+                nn.LogSoftmax(),
             )
         for i in len(range(hidden_dims-1))
         ]
