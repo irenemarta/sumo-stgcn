@@ -3,7 +3,7 @@ import os
 import sumolib
 from torch_geometric.data import Data, Dataset
 from typing import List, Dict, Optional, Tuple
-from .parser import XMLBuilder
+from ..data.parser import XMLBuilder
 
 from collections import defaultdict
 import xml.etree.ElementTree as ET
