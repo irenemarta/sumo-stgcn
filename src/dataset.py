@@ -38,9 +38,15 @@ class GraphBuilder(XMLBuilder):
         "internal": 6,
     }
 
-    def build(self, net_path: Path, tls_states: dict) -> dict:
+    def build(self, net_path: Path, tls_states: dict, disturbances: Dict[Tuple[str, str], float] = None) -> dict:
         """tls phases to be evaluated as dynamic features of the graph"""
         net = sumolib.net.readNet(net_path)
+        """disturbances: map for WHAT-IF scenario management 
+        (to admit non-binary disturbances. e.g. capacity reduction)
+        map (from_edge_id, to_edge_id) -> severity in [0.0, 1.0]
+        where 1.0 = normal connection, 0.0 = total closure.
+        """
+        disturbances = disturbances or {}
         edge_id_to_idx = {}
         edge_static_features = []
 
@@ -97,7 +103,8 @@ class GraphBuilder(XMLBuilder):
                         seen_conn.add(connection_pair) # avoid duplicates
                         source_nodes.append(source_id)
                         dest_nodes.append(dest_id)
-                        attribute_list.append([float(jtype), lon, lat, has_tls])
+                        severity = disturbances.get((e_in.getID(), e_out.getID()), 1.0)
+                        attribute_list.append([float(jtype), lon, lat, has_tls, severity])
 
         # source_nodes = where does the connection start
         # dest_nodes = where does the connection sink
@@ -110,7 +117,7 @@ class GraphBuilder(XMLBuilder):
             "edge_id_to_idx": edge_id_to_idx,  # dict -> key = edge_id, value = idx in the graph
             "x_static": x_static,  # shape = torch.tensor([N_nodes, N_features]) = [2350, 4] -> length, speed_limit, num_lanes, priority
             "edge_index": connections_idx,  # shape -> torch.Size([2, 4292]) = [2, N_edges]
-            "edge_attr": jun_attrib,  # shape -> torch.Size([5292, 4]) = [N_edges, N_features] -> jtype, lon, lat, has_tls 
+            "edge_attr": jun_attrib,  # shape -> torch.Size([5292, 5]) = [N_edges, N_features] -> jtype, lon, lat, has_tls, severity 
         }
 
 
@@ -241,14 +248,18 @@ class SUMODataset(Dataset):
         pass # no automatic download
         
     def len(self) -> int:
-        return len(self._available_snapshots_idx)
+        return len(self._available_snapshots_idx) - self.window + 1
 
-    def get(self, idx: int) -> Data:
-        i = self._available_snapshots_idx[idx]
-        return torch.load(
-            os.path.join(self.processed_dir, f'data_{i}.pt'), weights_only=False
-        )
-    
+    def get(self, idx: int):
+            window_idxs = self._available_snapshots_idx[idx: idx + self.window]
+            graphs = [
+                torch.load(os.path.join(self.processed_dir, f'data_{i}.pt'), weights_only=False)
+                for i in window_idxs
+            ]
+            target = graphs[-1].y  # x_dynamic al timestep window_idxs[-1] + 1
+            
+            return graphs, target # list of Data, to process more timestamps
+        
     @staticmethod
     def _scan_data_idx(processed_dir: str) -> List[int]:
         if not os.path.isdir(processed_dir):
@@ -284,8 +295,8 @@ class SUMODataset(Dataset):
 
 
 if __name__ == "__main__":
-    net_path = "/home/marta/tesi-5t/sumo-stgcn/data/raw/francia_peschiera_passenger.net.xml"
-    det_dir = "/home/marta/tesi-5t/sumo-stgcn/data/raw/DetOut_Morning"
+    net_path = "/home/fullsuper/irene/sumo-stgcn/data/raw/francia_peschiera_passenger.net.xml"
+    det_dir = "/home/fullsuper/irene/sumo-stgcn/data/raw/DetOut_Morning"
     graph = GraphBuilder().build(net, tls_states)
     parser = DetectorParser(det_dir, graph["edge_id_to_idx"])
     x_dyn, timesteps = parser.parse()

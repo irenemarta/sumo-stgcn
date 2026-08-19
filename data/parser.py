@@ -15,9 +15,9 @@ from xml.etree.ElementTree import indent  # file layout
 from pyproj import Transformer
 from pathlib import Path
 
-from programmi.src.helpers import format_xml
-# import programmi.src.inputs.config as cfg
-# from programmi.src.operations.cmd import random_routes
+from scripts.src.helpers import format_xml
+# import scripts.src.inputs.config as cfg
+# from scripts.src.operations.cmd import random_routes
 
 
 class XMLBuilder:

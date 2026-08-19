@@ -9,6 +9,7 @@ from src.dataset import SUMODataset
 from src.models.normalizer import MapNormalizer
 from src.blocks.gcn import GCN
 
+
 def check_gpu():    
     # Setup device-agnostic code 
     if torch.cuda.is_available():
@@ -34,6 +35,7 @@ def train(loader: DataLoader, model: GCN, loss_fn, optimizer, device:str='cpu'):
         optimizer.step() # gradient descent
     
     return loss
+
 
 @torch.no_grad()
 def eval(model: GCN, loader: DataLoader, loss_fn, device: str = 'cpu'):
