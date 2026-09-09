@@ -3,7 +3,7 @@ import os
 import sumolib
 from torch_geometric.data import Data, Dataset
 from typing import List, Dict, Optional, Tuple
-from ..data.parser import XMLBuilder
+from data.parser import XMLBuilder
 
 from collections import defaultdict
 import xml.etree.ElementTree as ET
@@ -158,9 +158,9 @@ class DetectorParser:
         
         for interval in root.findall("interval"):
             begin = float(interval.get("begin"))
-            fl = float(interval.get("flow"))
+            fl = float(interval.get("flow", 0.0))
             speed = float(interval.get("speed", -1))
-            occ = float(interval.get("occupancy"))
+            occ = float(interval.get("occupancy", 0.0))
             
             # accumulator takes a dict with all detectors features for each timestep
             accumulator[begin]["flow"].append(float(fl)) if fl is not None else 0.0
@@ -235,7 +235,8 @@ class Snapshot:
 
 class SUMODataset(Dataset):
     """PyTorch Geometric Dataset over SUMO traffic pre-processed snapshots."""
-    def __init__(self, root: str, transform=None, pre_transform=None, pre_filter=None):
+    def __init__(self, root: str, window: int, transform=None, pre_transform=None, pre_filter=None):
+        self.window = window
         self._available_snapshots_idx: List[int] = self._scan_data_idx(os.path.join(root, "processed"))
         super().__init__(root, transform, pre_transform, pre_filter)
     
@@ -244,6 +245,10 @@ class SUMODataset(Dataset):
     def processed_file_names(self) -> List[str]:
         return [f'data_{i}.pt' for i in self._available_snapshots_idx]
 
+    @property
+    def raw_file_names(self) -> List[str]:
+        return []
+    
     def download(self):
         pass # no automatic download
         
@@ -295,8 +300,9 @@ class SUMODataset(Dataset):
 
 
 if __name__ == "__main__":
-    net_path = "/home/fullsuper/irene/sumo-stgcn/data/raw/francia_peschiera_passenger.net.xml"
-    det_dir = "/home/fullsuper/irene/sumo-stgcn/data/raw/DetOut_Morning"
+    net_path = "/mnt/external1/irene/sumo-stgcn/data/raw/francia_peschiera_passenger.net.xml"
+    det_dir = "/mnt/external1/irene/sumo-stgcn/input/DetOut_DAY"
+    net = sumolib.net.readNet(net_path)
     graph = GraphBuilder().build(net, tls_states)
     parser = DetectorParser(det_dir, graph["edge_id_to_idx"])
     x_dyn, timesteps = parser.parse()
@@ -308,5 +314,3 @@ if __name__ == "__main__":
         edge_index = graph["edge_index"],
         edge_attr = graph["edge_attr"],
     )
-
-    dataset = SUMODataset(root="data/built_dataset")

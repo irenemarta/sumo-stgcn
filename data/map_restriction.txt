@@ -1,0 +1,47 @@
+(dtSumo) fullsuper@fullsuper-AS-4023S-TRT:/mnt/external1/irene$ netconvert --keep-edges.in-boundary 392038.60025456117,4991919.326597185,392648.498953695,4992508.947523319 -s /mnt/external1/irene/sumo-stgcn/input/francia_peschiera_passenger.net.xml -o /mnt/external1/irene/sumo-stgcn/input/map_restricted.net.xml -v
+Parsing sumo-net from '/mnt/external1/irene/sumo-stgcn/input/francia_peschiera_passenger.net.xml' ... done (269ms).
+ Import done:
+   1452 nodes loaded.
+   8 types loaded.
+   234 edges loaded.
+Removing self-loops ... done (0ms).
+Removing empty nodes ... done (1ms).
+   1294 nodes removed.
+Computing turning directions ... done (0ms).
+Assigning nodes to traffic lights ... done (0ms).
+Warning: Found sharp turn with radius 5.34 at the start of edge '952537916#1'.
+Warning: Found sharp turn with radius 4.70 at the start of edge '952537916#2'.
+Sorting nodes' edges ... done (0ms).
+Computing node shapes ... done (4ms).
+Computing edge shapes ... done (2ms).
+Computing node types ... done (0ms).
+Computing priorities ... done (1ms).
+Computing approached edges ... done (0ms).
+Guessing and setting roundabouts ... done (0ms).
+Computing approaching lanes ... done (0ms).
+Dividing of lanes on approached lanes ... done (0ms).
+Processing turnarounds ... done (0ms).
+Rechecking of lane endings ... done (0ms).
+Computing traffic light control information ... done (0ms).
+Computing node logics ... done (1ms).
+Computing traffic light logics ... done (1ms).
+ 3 traffic light(s) computed.
+Building inner edges ... done (2ms).
+Warning: Network contains very large coordinates and will probably flicker in the GUI. Check for outlying nodes and make sure the network is shifted to the coordinate origin
+-----------------------------------------------------
+Summary:
+ Node type statistics:
+  Unregulated junctions       : 0
+  Dead-end junctions          : 32
+  Priority junctions          : 108
+  Right-before-left junctions : 3
+  Traffic light junctions      : 15
+ Network boundaries:
+  Original boundary  : 390342.78,4990637.80,393605.80,4993667.28
+  Applied offset     : 0.00,0.00
+  Converted boundary : 391741.40,4991879.59,393152.53,4992538.07
+-----------------------------------------------------
+Writing network ...
+Warning: Unused state in tlLogic 'joinedS_429516080_5743628105_5743628106_5743628107_#10more', program 'real' at tl-index 1
+ done (16ms).
+Success.

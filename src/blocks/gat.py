@@ -9,7 +9,7 @@ class GAT(nn.Module):
         super().__init__()
         assert len(hidden_dims) >= 2, "WARNING: hidden layers shoudl be at least 2"
         conv_layers = [tgn.GATv2Conv(
-            in_channles=hidden_dims[i],
+            in_channels=hidden_dims[i],
             out_channels=hidden_dims[i-1],
             heads=heads,
             concat=False, # either concatenation or averaging of the feature vectors
@@ -20,9 +20,9 @@ class GAT(nn.Module):
         ]
         props = [
             nn.Sequential(
-                nn.LayerNom(hidden_dims[i+1]),
+                nn.LayerNorm(hidden_dims[i+1]),
                 nn.ReLU(),
-                nn.DropOut(p=dropout_prob),
+                nn.Dropout(p=dropout_prob),
             )
         for i in range(len(hidden_dims) - 1)
         ]
@@ -32,7 +32,7 @@ class GAT(nn.Module):
         
     def forward(self, data, x):
         edge_index, edge_attr = data.edge_index, data.edge_attr
-        for i, (conv, prop) in enumerate(zip(self.convs, self.props)):
+        for i, (conv, prop) in enumerate(zip(self.convs, self.propagations)):
             x = conv(x, edge_index, edge_attr)
             if i < len(self.convs) - 1:
                 x = prop(x)

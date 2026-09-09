@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from src.models.mapEncoder import SpatioTemporalConditioner
 
 # TODO: modifica inferenza per integrare velocity field 
 
@@ -55,3 +56,10 @@ def cfm_loss(velocity_field: VelocityVectorField, x1_target, cond):
     
     pred_vel = velocity_field(x_t, t, cond)
     return torch.mean((pred_vel - target_vel) ** 2)
+
+
+class FlowMatchingModel(nn.Module):
+    def __init__(self, conditioner: SpatioTemporalConditioner, velocity_field: VelocityVectorField):
+        super().__init__()
+        self.conditioner = conditioner
+        self.velocity_field = velocity_field

@@ -15,9 +15,22 @@ from xml.etree.ElementTree import indent  # file layout
 from pyproj import Transformer
 from pathlib import Path
 
-from scripts.src.helpers import format_xml
+# from scripts.src.helpers import format_xml
 # import scripts.src.inputs.config as cfg
 # from scripts.src.operations.cmd import random_routes
+
+
+def format_xml(xml, out_dir):
+    os.makedirs(out_dir, exist_ok=True)
+
+    for filename, root in xml.items():
+        tree = ET.ElementTree(root)
+        ET.indent(tree, space="  ", level=0)
+        tree.write(
+            os.path.join(out_dir, filename), encoding="utf-8", xml_declaration=True
+        )
+        print(f"{filename} successfully downloaded in {out_dir}")
+
 
 
 class XMLBuilder:

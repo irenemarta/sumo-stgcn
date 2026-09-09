@@ -29,8 +29,9 @@ class GCN(nn.Module):
 
     def forward(self, data):
         x, edge_index = data.x, data.edge_index
+        edge_weight = data.edge_attr[:,-1] # severity (last column of edge_attr)
         for i, (conv, prop) in enumerate(zip(self.convs, self.propagations)):
-            x = conv(x, edge_index)
+            x = conv(x, edge_index, edge_weight=edge_weight)
             if i < len(self.convs) - 1:
                 x = prop(x)
         return x
