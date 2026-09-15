@@ -5,6 +5,8 @@ import torch_geometric.nn as tgn
 
 # https://pytorch-geometric.readthedocs.io/en/latest/get_started/introduction.html#data-handling-of-graphs
 
+SEVERITY_IDX = 4 # positional idx in the features vector
+
 class GCN(nn.Module):
     def __init__(self, hidden_dims: list[int], dropout_prob: float):
         super().__init__()
@@ -29,7 +31,7 @@ class GCN(nn.Module):
 
     def forward(self, data):
         x, edge_index = data.x, data.edge_index
-        edge_weight = data.edge_attr[:,-1] # severity (last column of edge_attr)
+        edge_weight = data.edge_attr[:,SEVERITY_IDX]
         for i, (conv, prop) in enumerate(zip(self.convs, self.propagations)):
             x = conv(x, edge_index, edge_weight=edge_weight)
             if i < len(self.convs) - 1:

@@ -7,7 +7,7 @@ import torch_geometric.nn as tgn
 class GAT(nn.Module):
     def __init__(self, hidden_dims: list[int], heads: int, edge_dim: int, dropout_prob: float):
         super().__init__()
-        assert len(hidden_dims) >= 2, "WARNING: hidden layers shoudl be at least 2"
+        assert len(hidden_dims) >= 2, "WARNING: hidden layers should be at least 2"
         conv_layers = [tgn.GATv2Conv(
             in_channels=hidden_dims[i],
             out_channels=hidden_dims[i-1],

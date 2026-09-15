@@ -1,16 +1,18 @@
+import os
 import torch
 import torch.nn as nn
 from torch_geometric.profile import profileit
 from tqdm import tqdm
-from typing import Dict
+from typing import Callable, Dict, List, Optional
 
 import torch
 from torch.utils.data import Subset
 from torch_geometric.loader import DataLoader
-from data.dataset import SUMODataset
-from src.models.normalizer import MapNormalizer
-from src.blocks.gcn import GCN
+# from data.dataset import SUMODataset
+# from src.models.normalizer import MapNormalizer
+# from src.blocks.gcn import GCN
 from src.flowMatching import FlowMatchingModel, cfm_loss
+from src.output_eval import print_test_predictions
 
 
 def check_gpu():
@@ -36,7 +38,7 @@ def dataset_split(dataset, window:int, train_fraction:float=0.6, val_fraction:fl
     val_idx = list(range(train_end, validation_end - window))
     test_idx = list(range(validation_end, n_total))
     
-    return Subset(dataset, indeces=train_idx), Subset(dataset, indices=val_idx), Subset(dataset, indices=test_idx)
+    return Subset(dataset, indices=train_idx), Subset(dataset, indices=val_idx), Subset(dataset, indices=test_idx)
 
 
 # @profileit()
@@ -48,6 +50,8 @@ def train(model: FlowMatchingModel, loader: DataLoader, optimizer, device: str =
         target = target.to(device)
 
         cond = model.conditioner(graphs)
+        # print("target.shape:", target.shape)
+        # print("cond.shape:", cond.shape)
         loss = cfm_loss(model.velocity_field, target, cond)
 
         optimizer.zero_grad()
@@ -86,9 +90,12 @@ def run_training(
     checkpoint_path: str,
     print_every: int = 100,
     device: str = "cpu",
-) -> Dict[list]:
+    params_tracker: Optional[Callable[[FlowMatchingModel, int], None]] = None
+    # Callable[[function], ReturnType]
+) -> Dict[str, List[float]]:
 
     model.to(device)
+    os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True)
     best_val_loss = float("inf")
     loss_history = {"train_loss": [], "val_loss": []}
 
@@ -98,6 +105,9 @@ def run_training(
 
         loss_history["train_loss"].append(train_loss)
         loss_history["val_loss"].append(val_loss)
+        
+        if params_tracker is not None:
+            params_tracker(model, e)
 
         if val_loss < best_val_loss:
             best_val_loss = val_loss
@@ -107,5 +117,43 @@ def run_training(
             print(
                 f"Epoch: {e} | Train Loss: {train_loss:.4f} | Val Loss: {val_loss:.4f}"
             )
+            print_test_predictions(e, model, )
+
+    return loss_history
+
+def run_testing(
+    model: FlowMatchingModel,
+    test_loader: DataLoader,
+    num_epochs: int,
+    checkpoint_path: str,
+    loss_history: Dict[str, List[float]], 
+    print_every: int = 100,
+    device: str = "cpu",
+    params_tracker: Optional[Callable[[FlowMatchingModel, int], None]] = None
+    # Callable[[function], ReturnType]
+) -> Dict[str, List[float]]:
+
+    model.to(device)
+    os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True)
+    best_val_loss = float("inf")
+    loss_history = {"train_loss": [], "val_loss": []}
+
+    for e in tqdm(range(num_epochs)):
+        test_loss = eval(model, test_loader, device)
+
+        loss_history["test_loss"].append(test_loss)
+        
+        if params_tracker is not None:
+            params_tracker(model, e)
+
+        # if val_loss < best_val_loss:
+        #     best_val_loss = val_loss
+        #     torch.save(model.state_dict(), checkpoint_path)
+
+        if e % print_every == 0:
+            print(
+                f"Epoch: {e} | Train Loss: {test_loss:.4f}"
+            )
+            print_test_predictions(e, model, test_loader, df_params)
 
     return loss_history
