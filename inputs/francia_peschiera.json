@@ -1,0 +1,399 @@
+{
+    "id": "joinedS_12090799868_12136674195_12136674196_2602200967_#25more",
+    "programID": "real",
+    "phases": [
+        {
+            "duration": "17",
+            "state": "rrrGGGGGrrrrrrrrrrrrrrrrrrrrrrrOOOGGGGrrrr"
+        },
+        {
+            "duration": "1",
+            "state": "rrryyyyyrrrrrrrrrrrrrrrrrrrrrrrOOOyyyyrrrr"
+        },
+        {
+            "duration": "3",
+            "state": "GGGyyyyyrrGGGGgGgGrrrGGGGGGGGGGOOOyyyyrrrr"
+        },
+        {
+            "duration": "17",
+            "state": "GGGrrrrrrrGGGGgGgGrrrGGGGGGGGGGOOOrrrrrrrr"
+        },
+        {
+            "duration": "4",
+            "state": "GGGrrrrrrryyyGgGgGrrrGGyyyyGGGGOOOrrrrrrrr"
+        },
+        {
+            "duration": "2",
+            "state": "GGGrrrrrrrrrrGgGgGrrrGGrrrrGGGGOOOrrrrrrrr"
+        },
+        {
+            "duration": "31",
+            "state": "GGGrrrrrGGrrrGgGgGGGGGGrrrrGGGGOOOrrrrGGGG"
+        },
+        {
+            "duration": "4",
+            "state": "GGGrrrrryyrrrGgGgGyyGGGrrrrGGGGOOOrrrrGGGG"
+        },
+        {
+            "duration": "4",
+            "state": "yyyrrrrrrrrrryyyyyrryyyrrrryyyyOOOrrrryyyy"
+        },
+        {
+            "duration": "7",
+            "state": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrOOOrrrrrrrr"
+        }
+    ],
+    "connections": {
+        "6": [
+            {
+                "from": "121952564#5_0",
+                "to": "121952564#6_0",
+                "fromLane": "0",
+                "toLane": "0",
+                "linkIndex": 6
+            }
+        ],
+        "7": [
+            {
+                "from": "121952564#5_1",
+                "to": "121952564#6_1",
+                "fromLane": "1",
+                "toLane": "1",
+                "linkIndex": 7
+            }
+        ],
+        "20": [
+            {
+                "from": "1305446502#5_0",
+                "to": "83709549#0_0",
+                "fromLane": "0",
+                "toLane": "0",
+                "linkIndex": 20
+            }
+        ],
+        "18": [
+            {
+                "from": "1305446504#2_0",
+                "to": "1305446504#3_0",
+                "fromLane": "0",
+                "toLane": "0",
+                "linkIndex": 18
+            }
+        ],
+        "19": [
+            {
+                "from": "1305446504#2_1",
+                "to": "1305446504#3_1",
+                "fromLane": "1",
+                "toLane": "1",
+                "linkIndex": 19
+            }
+        ],
+        "8": [
+            {
+                "from": "1305446509#7_0",
+                "to": "1305446509#8_0",
+                "fromLane": "0",
+                "toLane": "0",
+                "linkIndex": 8
+            }
+        ],
+        "9": [
+            {
+                "from": "1305446509#7_1",
+                "to": "1305446509#8_1",
+                "fromLane": "1",
+                "toLane": "1",
+                "linkIndex": 9
+            }
+        ],
+        "0": [
+            {
+                "from": "1305446509#9_0",
+                "to": "1305446509#10_0",
+                "fromLane": "0",
+                "toLane": "0",
+                "linkIndex": 0
+            }
+        ],
+        "1": [
+            {
+                "from": "1305446509#9_1",
+                "to": "1305446509#10_1",
+                "fromLane": "1",
+                "toLane": "1",
+                "linkIndex": 1
+            }
+        ],
+        "34": [
+            {
+                "from": "1307179592_0",
+                "to": "121952560#0_1",
+                "fromLane": "0",
+                "toLane": "1",
+                "linkIndex": 34
+            }
+        ],
+        "35": [
+            {
+                "from": "1307179592_0",
+                "to": "121952547_0",
+                "fromLane": "0",
+                "toLane": "0",
+                "linkIndex": 35
+            }
+        ],
+        "36": [
+            {
+                "from": "1307179592_1",
+                "to": "121952547_1",
+                "fromLane": "1",
+                "toLane": "1",
+                "linkIndex": 36
+            }
+        ],
+        "37": [
+            {
+                "from": "1307179592_2",
+                "to": "121952547_2",
+                "fromLane": "2",
+                "toLane": "2",
+                "linkIndex": 37
+            }
+        ],
+        "29": [
+            {
+                "from": "1307179594#0_0",
+                "to": "1307179594#1_0",
+                "fromLane": "0",
+                "toLane": "0",
+                "linkIndex": 29
+            }
+        ],
+        "30": [
+            {
+                "from": "1307179594#0_1",
+                "to": "1307179594#1_1",
+                "fromLane": "1",
+                "toLane": "1",
+                "linkIndex": 30
+            }
+        ],
+        "10": [
+            {
+                "from": "1307179596_0",
+                "to": "37756577#0_0",
+                "fromLane": "0",
+                "toLane": "0",
+                "linkIndex": 10
+            }
+        ],
+        "11": [
+            {
+                "from": "1307179596_1",
+                "to": "37756577#0_1",
+                "fromLane": "1",
+                "toLane": "1",
+                "linkIndex": 11
+            }
+        ],
+        "12": [
+            {
+                "from": "1307179596_2",
+                "to": "37756577#0_2",
+                "fromLane": "2",
+                "toLane": "2",
+                "linkIndex": 12
+            }
+        ],
+        "23": [
+            {
+                "from": "1307179607#17_0",
+                "to": "1307179607#18_0",
+                "fromLane": "0",
+                "toLane": "0",
+                "linkIndex": 23
+            }
+        ],
+        "40": [
+            {
+                "from": "135863195#1_0",
+                "to": "888356268_0",
+                "fromLane": "0",
+                "toLane": "0",
+                "linkIndex": 40
+            }
+        ],
+        "41": [
+            {
+                "from": "135863195#1_1",
+                "to": "888356268_1",
+                "fromLane": "1",
+                "toLane": "1",
+                "linkIndex": 41
+            }
+        ],
+        "27": [
+            {
+                "from": "220496274#0_0",
+                "to": "220496274#1_0",
+                "fromLane": "0",
+                "toLane": "0",
+                "linkIndex": 27
+            }
+        ],
+        "28": [
+            {
+                "from": "220496274#0_1",
+                "to": "220496274#1_1",
+                "fromLane": "1",
+                "toLane": "1",
+                "linkIndex": 28
+            }
+        ],
+        "21": [
+            {
+                "from": "220496275#0_0",
+                "to": "220496275#1_0",
+                "fromLane": "0",
+                "toLane": "0",
+                "linkIndex": 21
+            }
+        ],
+        "22": [
+            {
+                "from": "220496275#0_1",
+                "to": "220496275#1_1",
+                "fromLane": "1",
+                "toLane": "1",
+                "linkIndex": 22
+            }
+        ],
+        "38": [
+            {
+                "from": "220496276#1_0",
+                "to": "121952560#0_0",
+                "fromLane": "0",
+                "toLane": "0",
+                "linkIndex": 38
+            }
+        ],
+        "39": [
+            {
+                "from": "220496276#1_1",
+                "to": "121952560#0_1",
+                "fromLane": "1",
+                "toLane": "1",
+                "linkIndex": 39
+            }
+        ],
+        "13": [
+            {
+                "from": "287833587#1_0",
+                "to": "-1307179596_0",
+                "fromLane": "0",
+                "toLane": "0",
+                "linkIndex": 13
+            }
+        ],
+        "14": [
+            {
+                "from": "287833587#1_0",
+                "to": "-1307179596_1",
+                "fromLane": "0",
+                "toLane": "1",
+                "linkIndex": 14
+            }
+        ],
+        "15": [
+            {
+                "from": "287833587#1_1",
+                "to": "-1307179596_1",
+                "fromLane": "1",
+                "toLane": "1",
+                "linkIndex": 15
+            }
+        ],
+        "16": [
+            {
+                "from": "287833587#1_1",
+                "to": "-1307179596_2",
+                "fromLane": "1",
+                "toLane": "2",
+                "linkIndex": 16
+            }
+        ],
+        "17": [
+            {
+                "from": "287833587#1_2",
+                "to": "-1307179596_2",
+                "fromLane": "2",
+                "toLane": "2",
+                "linkIndex": 17
+            }
+        ],
+        "24": [
+            {
+                "from": "37756577#0_0",
+                "to": "37756577#1_0",
+                "fromLane": "0",
+                "toLane": "0",
+                "linkIndex": 24
+            }
+        ],
+        "25": [
+            {
+                "from": "37756577#0_1",
+                "to": "37756577#1_1",
+                "fromLane": "1",
+                "toLane": "1",
+                "linkIndex": 25
+            }
+        ],
+        "26": [
+            {
+                "from": "37756577#0_2",
+                "to": "37756577#1_2",
+                "fromLane": "2",
+                "toLane": "2",
+                "linkIndex": 26
+            }
+        ],
+        "3": [
+            {
+                "from": "38319544#27_0",
+                "to": "38319544#28_0",
+                "fromLane": "0",
+                "toLane": "0",
+                "linkIndex": 3
+            }
+        ],
+        "4": [
+            {
+                "from": "38319544#27_1",
+                "to": "38319544#28_1",
+                "fromLane": "1",
+                "toLane": "1",
+                "linkIndex": 4
+            }
+        ],
+        "5": [
+            {
+                "from": "38319544#27_1",
+                "to": "38319544#28_2",
+                "fromLane": "1",
+                "toLane": "2",
+                "linkIndex": 5
+            }
+        ],
+        "2": [
+            {
+                "from": "83709549#1_0",
+                "to": "83709549#2_0",
+                "fromLane": "0",
+                "toLane": "0",
+                "linkIndex": 2
+            }
+        ]
+    }
+}

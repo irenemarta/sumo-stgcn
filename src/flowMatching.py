@@ -22,11 +22,11 @@ https://diffusionflow.github.io/ some other overview
 
 class ODE:
     """Velocity field to integrate."""
-    def drift_coefficient(self, xt: torch.Tensor, t: torch.Tensor, cond: torch.Tensor) -> torch.Tensor:
+    def drift_coefficient(self, x_t: torch.Tensor, t: torch.Tensor, cond: torch.Tensor) -> torch.Tensor:
         """
         Returns the drift coefficient of the ODE.
         Args:
-            - xt: state at time t, shape (bs, dim)
+            - x_t: state at time t, shape (bs, dim)
             - t: time, shape (batch_size, 1)
             - cond; flow matching conditioner
         Returns:
@@ -34,22 +34,43 @@ class ODE:
         """
         pass
 
+class VelocityVectorField(nn.Module):
+    """
+    Predicts the velocity fied v(x_t, t, cond) to perform flow matching.
+    x_t: features state [N_nodes, N_feat_dyn]
+    t: time of interpolation (included in the interval [0,1])
+    cond: embedding of [N_nodes, hidden_dims]
+    """
+    def __init__(self, feat_dyn_dim: int, cond_dim: int, hidden_dim: int):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(feat_dyn_dim + 1 + cond_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, feat_dyn_dim),
+        )
 
-def VelocityFieldODE(ODE):
+    def forward(self, x_t, t, cond):
+        B, N, _ = cond.shape
+        t_expanded = t.view(1, 1, 1).expand(B, N, 1)
+        inp = torch.cat([x_t, t_expanded, cond], dim=-1)
+        return self.net(inp)
+    
+
+class VelocityFieldODE(ODE):
     """Adapts the VeocityVectorField to the ODE."""
     def __init__(self, velocity_fied: VelocityVectorField):
         self.velocity_field = velocity_fied
         
-    def drift_coefficient(self, xt, t, cond):
-        return self.velocity_field(xt, t, cond)
+    def drift_coefficient(self, x_t, t, cond):
+        return self.velocity_field(x_t, t, cond)
 
 
 class Simulator:
-    def step(self, xt: torch.Tensor, t: torch.Tensor, dt: torch.Tensor, cond: torch.Tensor):
+    def step(self, x_t: torch.Tensor, t: torch.Tensor, dt: torch.Tensor, cond: torch.Tensor):
         """
         Takes one simulation step
         Args:
-            - xt: state at time t, shape (bs, dim)
+            - x_t: state at time t, shape (bs, dim)
             - t: time, shape (bs,1)
             - dt: time, shape (bs,1)
             - cond: registered state for each node, in n_hidden parameters
@@ -80,39 +101,19 @@ class EulerSimulator(Simulator):
     def __init__(self, ode: ODE):
         self.ode = ode
         
-    def step(self, xt: torch.Tensor, t: torch.Tensor, h: torch.Tensor, cond):
-        return xt + self.ode.drift_coefficient(xt,t, cond) * h
+    def step(self, x_t: torch.Tensor, t: torch.Tensor, h: torch.Tensor, cond):
+        return x_t + self.ode.drift_coefficient(x_t, t, cond) * h
     
     @torch.no_grad()
     def simulate(self, x0: torch.Tensor, cond: torch.Tensor, n_integration_steps: int = 50) -> torch.Tensor:
         h = 1.0 / n_integration_steps
-        xt = x0
+        x_t = x0
         for i in range(n_integration_steps):
             t = torch.tensor([i * h], device=x0.device)
             x_t = self.step(x_t, t, h, cond)
-        return xt
+        return x_t
 
 
-class VelocityVectorField(nn.Module):
-    """
-    Predicts the velocity fied v(x_t, t, cond) to perform flow matching.
-    x_t: features state [N_nodes, N_feat_dyn]
-    t: time of interpolation (included in the interval [0,1])
-    cond: embedding of [N_nodes, hidden_dims]
-    """
-    def __init__(self, feat_dyn_dim: int, cond_dim: int, hidden_dim: int):
-        super().__init__()
-        self.net = nn.Sequential(
-            nn.Linear(feat_dyn_dim + 1 + cond_dim, hidden_dim),
-            nn.ReLU(),
-            nn.Linear(hidden_dim, feat_dyn_dim),
-        )
-
-    def forward(self, x_t, t, cond):
-        t_expanded = t.expand(x_t.shape[0], 1)
-        inp = torch.cat([x_t, t_expanded, cond], dim=-1)
-        return self.net(inp)
-    
 
 # conditional flow matching loss
 def cfm_loss(velocity_field: VelocityVectorField, x1_target, cond):
@@ -159,15 +160,15 @@ def predict(model: FlowMatchingModel, graphs: list, feat_dyn_dim: int,
     Returns a tensor of shape [n_samples, N_nodes, feat_dyn_dim].
     """
     model.eval()
-    cond = model.conditioner(graphs)
-    n_nodes = cond.shape[0]
+    cond = model.conditioner(graphs) # [1, N_nodes, hidden] (1=B)
+    B, n_nodes, _ = cond.shape
     device = cond.device
 
     simulator = EulerSimulator(VelocityFieldODE(model.velocity_field))
 
     predictions = []
     for _ in range(n_samples):
-        x0 = torch.randn(n_nodes, feat_dyn_dim, device=device)
+        x0 = torch.randn(B, n_nodes, feat_dyn_dim, device=device) # [B, N_nodes, N_fea_dyn]
         predictions.append(simulator.simulate(x0, cond, n_integration_steps=n_integration_steps))
 
-    return torch.stack(predictions, dim=0)
+    return torch.stack(predictions, dim=0) # [n_samples, 1, N_nodes, F], 1 = B

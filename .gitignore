@@ -4,3 +4,4 @@ __pycache__
 input
 data/built_dataset
 TXT
+inputs/DetOut_Day_seed42

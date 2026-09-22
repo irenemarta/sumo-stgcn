@@ -2,6 +2,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch_geometric.nn as tgn
 
+# DROPOUT penalizes model variance by randomly freezing neurons in a layer during model training.
+
 
 # https://pytorch-geometric.readthedocs.io/en/latest/get_started/introduction.html#data-handling-of-graphs
 

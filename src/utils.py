@@ -1,14 +1,19 @@
 import os
-import torch
-import torch.nn as nn
-from torch_geometric.profile import profileit
 from tqdm import tqdm
-from typing import Callable, Dict, List, Optional
+from typing import Callable, Dict, List, Optional, Tuple
 
 import torch
+import torch.nn as nn
 from torch.utils.data import Subset
 from torch_geometric.loader import DataLoader
-# from data.dataset import SUMODataset
+from torch_geometric.profile import profileit
+from torch_geometric.data import Batch
+
+import inputs.config as cfg
+import importlib
+importlib.reload(cfg) # refresh root dir
+
+from data.dataset import SUMODataset
 # from src.models.normalizer import MapNormalizer
 # from src.blocks.gcn import GCN
 from src.flowMatching import FlowMatchingModel, cfm_loss
@@ -25,20 +30,60 @@ def check_gpu():
         device = "cpu"  # Defaults to CPU if NVIDIA GPU/Apple GPU aren't available
 
     print(f"Using device: {device}")
-    
-    return device 
+
+    return device
 
 
-def dataset_split(dataset, window:int, train_fraction:float=0.6, val_fraction:float=0.20, test_fraction:float=0.20) -> Subset:
-    n_total = len(dataset)
-    train_end = int(n_total*train_fraction)
-    validation_end = train_end + int(n_total*val_fraction)
+from torch_geometric.data import Batch
+
+
+def collate_batch(batch: list, window: int) -> Tuple[list, torch.Tensor]:
+    """
+    Gathers `batch_size` indipendent samples  (each sample is made of `window`
+    graphs + target) in a unique batch. Useful to process each sample in a unique forward pass.
+
+    For each position w in the window, `batch_size` graphs (one per sample) are aggregated
+    in a single Batch (same topology of the original graph).
+    Targets are stacked in a unique tensor of size [batch_size, N_nodes, F].
+    """
+    # batch: list of samples = [([graphs_1], t1), ([g2], t2), ..., ([g_nsample], t_nsample)]
+    # with g_n = list of W graphs (Data objects)
+    # t_n = target at
+    batched_graphs = []
+    for w in range(window):
+        graphs_at_w = [sample[0][w] for sample in batch]
+        batched_graphs.append(Batch.from_data_list(graphs_at_w))
+
+    targets = torch.stack([sample[1] for sample in batch], dim=0)
+    return batched_graphs, targets
+
+
+# collate fn is useful ot parallelize work and exploit GPU potential
+
+
+def dataset_split(
+    dataset: SUMODataset,
+    window: int,
+    train_fraction: float = cfg.TRAIN_FRACTION,
+    val_fraction: float = cfg.VAL_FRACTION,
+    test_fraction: float = cfg.TEST_FRACTION,
+) -> Subset:
+    train_idx, val_idx, test_idx = [], [], []
     
-    train_idx = list(range(0, train_end - window))
-    val_idx = list(range(train_end, validation_end - window))
-    test_idx = list(range(validation_end, n_total))
-    
-    return Subset(dataset, indices=train_idx), Subset(dataset, indices=val_idx), Subset(dataset, indices=test_idx)
+    for sid, (start, end) in dataset.scenario_index_ranges().items():
+        n_total = len(dataset)
+        train_end = int(n_total * train_fraction)
+        validation_end = train_end + int(n_total * val_fraction)
+
+        train_idx += list(range(start, start + max(0, train_end - window)))
+        val_idx += list(range(start + train_end, start + max(train_end, validation_end - window)))
+        test_idx += list(range(start + validation_end, end))
+
+    return (
+        Subset(dataset, indices=train_idx),
+        Subset(dataset, indices=val_idx),
+        Subset(dataset, indices=test_idx),
+    )
 
 
 # @profileit()
@@ -72,7 +117,8 @@ def eval(model: FlowMatchingModel, loader: DataLoader, device: str = "cpu"):
 
         cond = model.conditioner(graphs)
         loss = cfm_loss(model.velocity_field, target, cond)
-        total_loss += loss
+        total_loss += loss.item()
+        # .item() converts tensor cuda to float to avoid device mismatch
 
     return total_loss / len(loader)
 
@@ -90,7 +136,7 @@ def run_training(
     checkpoint_path: str,
     print_every: int = 100,
     device: str = "cpu",
-    params_tracker: Optional[Callable[[FlowMatchingModel, int], None]] = None
+    params_tracker: Optional[Callable[[FlowMatchingModel, int], None]] = None,
     # Callable[[function], ReturnType]
 ) -> Dict[str, List[float]]:
 
@@ -105,7 +151,7 @@ def run_training(
 
         loss_history["train_loss"].append(train_loss)
         loss_history["val_loss"].append(val_loss)
-        
+
         if params_tracker is not None:
             params_tracker(model, e)
 
@@ -117,43 +163,17 @@ def run_training(
             print(
                 f"Epoch: {e} | Train Loss: {train_loss:.4f} | Val Loss: {val_loss:.4f}"
             )
-            print_test_predictions(e, model, )
+            # print_test_predictions(e, model, )
 
     return loss_history
 
-def run_testing(
-    model: FlowMatchingModel,
-    test_loader: DataLoader,
-    num_epochs: int,
-    checkpoint_path: str,
-    loss_history: Dict[str, List[float]], 
-    print_every: int = 100,
-    device: str = "cpu",
-    params_tracker: Optional[Callable[[FlowMatchingModel, int], None]] = None
-    # Callable[[function], ReturnType]
-) -> Dict[str, List[float]]:
 
+def run_testing(model, test_loader, num_repeats, device="cpu", params_tracker=None):
     model.to(device)
-    os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True)
-    best_val_loss = float("inf")
-    loss_history = {"train_loss": [], "val_loss": []}
-
-    for e in tqdm(range(num_epochs)):
+    test_losses = []
+    for e in tqdm(range(num_repeats)):
         test_loss = eval(model, test_loader, device)
-
-        loss_history["test_loss"].append(test_loss)
-        
+        test_losses.append(test_loss.item())
         if params_tracker is not None:
             params_tracker(model, e)
-
-        # if val_loss < best_val_loss:
-        #     best_val_loss = val_loss
-        #     torch.save(model.state_dict(), checkpoint_path)
-
-        if e % print_every == 0:
-            print(
-                f"Epoch: {e} | Train Loss: {test_loss:.4f}"
-            )
-            print_test_predictions(e, model, test_loader, df_params)
-
-    return loss_history
+    return {"test_loss": test_losses}

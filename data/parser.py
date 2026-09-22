@@ -1,7 +1,5 @@
-import os
-import sys
+import os, sys, math
 from typing import Dict
-import math
 
 # Set environment variable and import sumolib -> more info here: https://sumo.dlr.de/docs/Tools/Sumolib.html
 if "SUMO_HOME" in os.environ:

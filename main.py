@@ -1,6 +1,10 @@
-import os
+import os, sys
+from pathlib import Path
+from functools import partial
+
 import torch
 from torch.utils.data import DataLoader
+from torch_geometric.data import Batch
 
 from data.dataset import SUMODataset
 from src.blocks.gcn import GCN
@@ -9,25 +13,35 @@ from src.models.mapEncoder import SpatialEncoder
 from src.blocks.gru import TemporalEncoder
 from src.models.mapEncoder import SpatioTemporalConditioner
 from src.flowMatching import VelocityVectorField, FlowMatchingModel, predict
-from src.utils import check_gpu, run_training, dataset_split
+from src.utils import check_gpu, run_training, dataset_split, collate_batch
 from src.models.normalizer import MapNormalizer 
 
 # setup
+ROOT = Path.cwd().parent
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))
+
+print(f"project root: {ROOT}")
+
 WINDOW = 6
-EPOCHS = 200
+EPOCHS = 3000
 device = check_gpu()
 
 # Dataset split
-# TODO normalize x_dyn in preprocessing
 dataset = SUMODataset(root="data/built_dataset", window=WINDOW)
 train_set, val_set, test_set = dataset_split(dataset, window=WINDOW, train_fraction=0.6, val_fraction=0.2, test_fraction=0.2)
 
+print("len(dataset):", len(dataset))
+print("window:", WINDOW)
+print("Found" + len(os.listdir(os.path.join(f"{ROOT}/data/built_dataset", "processed"))) + ".pt files")
+
+# collate fn is useful ot parallelize work and exploit GPU potential
 # Build dataloaders
 # collate custom to deactivate automatic batching - DataLoader can't batch (list[Data], Tensor)
-collate_fn = lambda batch: batch[0]
-train_loader = DataLoader(train_set, batch_size=1, shuffle=True, collate_fn=collate_fn) # shuffle only training set
-val_loader = DataLoader(val_set, batch_size=1, shuffle=False, collate_fn=collate_fn)
-test_loader = DataLoader(test_set, batch_size=1, shuffle=False, collate_fn=collate_fn)
+collate_fn = partial(collate_batch, window=WINDOW) 
+train_loader = DataLoader(train_set, batch_size=16, shuffle=True, collate_fn=collate_fn) # shuffle only training set
+val_loader = DataLoader(val_set, batch_size=16, shuffle=False, collate_fn=collate_fn)
+test_loader = DataLoader(test_set, batch_size=8, shuffle=False, collate_fn=collate_fn)
 
 # dimensions
 node_in_dim = 4 + 3 # x_static + x_dynamic
@@ -48,26 +62,24 @@ velocity_field = VelocityVectorField(feat_dyn_dim=feat_dyn_dim, cond_dim=tempora
 model = FlowMatchingModel(conditioner, velocity_field).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
-# for name, param in model.named_parameters():
-#     print(name, param, '\n')
 
-normalizer = MapNormalizer.load("data/built_dataset/norm_stats.pt")
+normalizer = MapNormalizer.load(f"{ROOT}/data/built_dataset/normalized/norm_stats.pt").to(device)
 sample = train_set[0]   # passa per Subset -> SUMODataset.__getitem__ -> get()
 graphs, target = sample
 graphs = [g.to(device) for g in graphs]
+target = target.to(device)
 preds = predict(model, graphs, feat_dyn_dim=3, n_integration_steps=50, n_samples=10)
+print(f"preds shape:{preds.shape}")
 # preds.shape: [10, N_nodes, 3]
-pred_mean = preds.mean(dim=0) # [N_nodes, 3] — stima puntuale
-pred_std = preds.std(dim=0) # [N_nodes, 3] — incertezza per nodo/feature
-pred_mean_real = normalizer.inverse(pred_mean)   # torna in veicoli/ora, non z-score
+pred_mean = preds.mean(dim=0) # [N_nodes, 3]
+pred_std = preds.std(dim=0) # [N_nodes, 3]
+pred_mean_real = normalizer.inverse(pred_mean)   # torna in veh/h
 target_real = normalizer.inverse(target)
 # print("target.shape (accesso diretto):", target.shape)
 
 # print("len(dataset):", len(dataset))
 # print("window:", WINDOW)
 # print("file .pt trovati:", len(os.listdir(os.path.join("data/built_dataset", "processed"))))
-
-
 
 # Train model
 history = run_training(

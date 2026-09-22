@@ -1,0 +1,13 @@
+scenarios:
+  - id: baseline_seed42
+    det_dir: input/DetOut_Day_seed42
+    disturbances: []
+  - id: baseline_seed36
+    det_dir: input/DetOut_Day_seed36
+    disturbances: []
+  - id: baseline_seed123
+    det_dir: input/DetOut_Day_seed123
+    disturbances: []
+  - id: closure_A_070_seed42
+    det_dir: input/DetOut_ClosureA070_seed1
+    disturbances: [{from: ..., to: ..., severity: 0.7}]

@@ -7,9 +7,14 @@ class MapNormalizer:
         self.eps = eps
         reduce_dims = tuple(range(map_features.dim() - 1))
         n = map_features.numel() // map_features.shape[-1]
-        self.mu = torch.mean(map_features, dim=reduce_dims, keepdim=True)
+        self.mu = torch.mean(map_features, dim=reduce_dims)
         # sqrt(sum(x(i) - mu)^2 / N) 
-        self.sigma = torch.sqrt(torch.sum((map_features - self.mu) ** 2, dim=reduce_dims, keepdim=True) / n)
+        self.sigma = torch.sqrt(torch.sum((map_features - self.mu) ** 2, dim=reduce_dims) / n)
+        
+    def to(self, device):
+        self.mu = self.mu.to(device=device)
+        self.sigma = self.sigma.to(device=device)
+        return self
     
     def zscore(self, map_features: torch.Tensor) -> torch.Tensor:
         return (map_features - self.mu) / (self.sigma + self.eps)

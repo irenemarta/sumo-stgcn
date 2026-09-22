@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -7,6 +8,10 @@ from pathlib import Path
 from torch.utils.data import DataLoader
 from src.flowMatching import FlowMatchingModel
 
+
+## about training and validation loss
+# why is the validation loss lower than trainin loss?
+# https://towardsdatascience.com/what-your-validation-loss-is-lower-than-your-training-loss-this-is-why-5e92e0b1747e/
 
 def collect_params_stats(model: nn.Module, epoch: int):
     """Collect avg and std values for each layer, for each epoch."""
@@ -172,3 +177,25 @@ def plot_param_evolution(param_history: pd.DataFrame):
 
     plt.tight_layout()
     return fig
+
+
+
+@torch.no_grad()
+def evaluate_mae(model, test_loader, normalizer, device="cpu",
+                n_integration_steps=50, n_samples=10) -> torch.Tensor:
+    """MAE per feature (flow, speed, occupancy), in unità reali, su tutto il test set."""
+    model.eval()
+    all_mae = []
+
+    for graphs, target in test_loader:
+        graphs = [g.to(device) for g in graphs]
+        target = target.to(device)
+
+        preds = predict(model, graphs, feat_dyn_dim=3,
+                        n_integration_steps=n_integration_steps, n_samples=n_samples)
+        pred_mean_real = normalizer.inverse(preds.mean(dim=0))
+        target_real = normalizer.inverse(target)
+
+        all_mae.append((pred_mean_real - target_real).abs().mean(dim=0))
+
+    return torch.stack(all_mae).mean(dim=0)  # [3]

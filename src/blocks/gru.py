@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 
 """
@@ -19,6 +20,11 @@ class TemporalEncoder(nn.Module):
             dropout=dropout_prob if num_layers > 1 else 0.0,
         )
 
-    def forward(self, x_seq):
-        _, h_n = self.gru(x_seq)  # h_n: [num_layers, N_nodes, hidden_dim]
-        return h_n[-1]  # last layer state: [N_nodes, hidden_dim]
+    def forward(self, x_seq: torch.Tensor) -> torch.Tensor:
+        # why do we use batches and dataloaders? 
+        # https://www.diariodiunanalista.it/posts/addestramento-efficiente-di-modelli-di-deep-learning-in-pytorch/
+        W, B, N, H = x_seq.shape
+        # print(f"Window, Batch, Nodes, Hidden dims: {W, B, N, H}")
+        x_seq_flat = x_seq.view(W, B * N, H) # GRU input: B*N
+        _, h_n = self.gru(x_seq_flat)  # h_n: [num_layers, N_nodes, hidden_dim]
+        return h_n[-1].view(B, N, -1)  # last layer state: [N_nodes, hidden_dim]

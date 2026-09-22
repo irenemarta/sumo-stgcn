@@ -28,8 +28,11 @@ class SpatioTemporalConditioner(nn.Module):
 
     def forward(self, graphs: list) -> torch.Tensor:
         # graphs: list of W Data objects (window returned by SUMODataset.get() with traffic state features)
-        embeddings = [self.spatial_encoder(g) for g in graphs]  # GCN + GAT ->  [N_nodes, hidden] each
-        x_seq = torch.stack(embeddings, dim=0)  # input to GRU -> [W, N_nodes, hidden] -> temporal dimension added
-        cond = self.temporal_encoder(x_seq)  # [N_nodes, hidden]
-        
-        return cond 
+        embeddings = []
+        for g in graphs:
+            emb = self.spatial_encoder(g) # [B*N_nodi, hidden]
+            B = getattr(g, "num_graphs", 1) # Batch of num_graphs
+            emb = emb.view(B, -1, emb.shape[-1]) # tensor reshaping to [B, N_nodi, hidden]
+            embeddings.append(emb) # GCN + GAT
+        x_seq = torch.stack(embeddings, dim=0) # input to GRU, [W, B, N_nodes, hidden]
+        return self.temporal_encoder(x_seq) # [B, N_nodes, hidden]
