@@ -1,4 +1,5 @@
 import os, sys
+import pandas as pd
 from pathlib import Path
 from functools import partial
 
@@ -15,16 +16,25 @@ from src.models.mapEncoder import SpatioTemporalConditioner
 from src.flowMatching import VelocityVectorField, FlowMatchingModel, predict
 from src.utils import check_gpu, run_training, dataset_split, collate_batch
 from src.models.normalizer import MapNormalizer 
+from src.output_eval import (
+    collect_params_stats, plot_loss_curves, plot_param_evolution,
+    evaluate_mae_per_scenario, plot_scenario_comparison, plot_dataloaders
+)
 
 # setup
-ROOT = Path.cwd().parent
+ROOT = Path.cwd()
 if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))
+
+checkpoint_dir = Path("checkpoints")
+out_path = Path("output")
+checkpoint_dir.mkdir(exist_ok=True)
+out_path.mkdir(exist_ok=True)
 
 print(f"project root: {ROOT}")
 
 WINDOW = 6
-EPOCHS = 3000
+EPOCHS = 500
 device = check_gpu()
 
 # Dataset split
@@ -33,7 +43,7 @@ train_set, val_set, test_set = dataset_split(dataset, window=WINDOW, train_fract
 
 print("len(dataset):", len(dataset))
 print("window:", WINDOW)
-print("Found" + len(os.listdir(os.path.join(f"{ROOT}/data/built_dataset", "processed"))) + ".pt files")
+print(f"Found {len(os.listdir(os.path.join(f'{ROOT}/data/built_dataset', 'processed')))} .pt files")
 
 # collate fn is useful ot parallelize work and exploit GPU potential
 # Build dataloaders
@@ -63,7 +73,7 @@ model = FlowMatchingModel(conditioner, velocity_field).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
 
-normalizer = MapNormalizer.load(f"{ROOT}/data/built_dataset/normalized/norm_stats.pt").to(device)
+normalizer = MapNormalizer.load(f"{ROOT}/data/built_dataset/normalized/dynamic_norm_stats.pt").to(device)
 sample = train_set[0]   # passa per Subset -> SUMODataset.__getitem__ -> get()
 graphs, target = sample
 graphs = [g.to(device) for g in graphs]
@@ -81,6 +91,11 @@ target_real = normalizer.inverse(target)
 # print("window:", WINDOW)
 # print("file .pt trovati:", len(os.listdir(os.path.join("data/built_dataset", "processed"))))
 
+param_history = []
+def param_tracker(model, epoch):
+    if epoch % 10 == 0:
+        param_history.append(collect_params_stats(model, epoch))
+
 # Train model
 history = run_training(
     model=model,
@@ -90,5 +105,25 @@ history = run_training(
     device=device,
     num_epochs=EPOCHS,
     checkpoint_path="checkpoints/first_run.pt",
-    print_every=5,
+    history_path="checkpoints/history.json",
+    params_tracker=param_tracker,
+    print_every=20,
 )
+
+# plot_dataloaders rimosso per ora: assume batch (tensor, tensor) semplici, ma i nostri
+# batch sono (list[Batch PyG], target) - richiederebbe una riscrittura, non un fix veloce.
+# plot_dataloaders(dl_train=train_loader, dl_test=test_loader, out_path=out_path)
+
+plot_param_evolution(param_history=pd.concat(param_history, ignore_index=True), out_path=out_path)
+plot_loss_curves(history=history, log_scale=False, out_path=out_path)
+
+mae_df = evaluate_mae_per_scenario(
+    model=model,
+    dataset=dataset,
+    normalizer=normalizer,
+    window=WINDOW,
+    device=device,
+    n_samples=10,
+)
+mae_df.to_csv(out_path / "mae_per_scenario.csv", index=False)
+plot_scenario_comparison(mae_df, out_path=out_path)

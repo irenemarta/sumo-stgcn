@@ -5,8 +5,10 @@ import seaborn as sns
 import pandas as pd
 from typing import Dict, List
 from pathlib import Path
-from torch.utils.data import DataLoader
-from src.flowMatching import FlowMatchingModel
+
+from functools import partial
+from torch.utils.data import DataLoader, Subset
+from src.flowMatching import FlowMatchingModel, predict
 
 
 ## about training and validation loss
@@ -63,7 +65,7 @@ def plot_parameters(df_params: pd.DataFrame, out_path: Path = "."):
         ax=axs[1],
     )
 
-    plt.savefig(Path(out_path / "parameters.png"), dpi=fig.dpi)
+    plt.savefig(Path(out_path) / "parameters.png", dpi=fig.dpi)
 
 
 def plot_dataloaders(dl_train: DataLoader, dl_test: DataLoader, out_path: Path = "."):
@@ -81,7 +83,7 @@ def plot_dataloaders(dl_train: DataLoader, dl_test: DataLoader, out_path: Path =
     for batch, (x, y) in enumerate(dl_test):
         axs[1].plot(x.squeeze(), y.squeeze(), "o")  # 2 batch
 
-    plt.savefig(Path(out_path / "dataloaders.png"), dpi=fig.dpi)
+    plt.savefig(Path(out_path) / "dataloaders.png", dpi=fig.dpi)
 
 
 def plot_loss_curves(
@@ -98,7 +100,7 @@ def plot_loss_curves(
     ax.legend()
     ax.grid(True, alpha=0.3)
 
-    plt.savefig(Path(out_path / "loss.png"), dpi=fig.dpi)
+    plt.savefig(Path(out_path) / "loss.png", dpi=fig.dpi)
 
 
 def print_test_predictions(
@@ -125,7 +127,7 @@ def print_test_predictions(
     axs[0].set_ylabel("labels")
     axs[0].legend()
 
-    plt.savefig(Path(out_path / "dataloaders.png"), dpi=fig.dpi)
+    plt.savefig(Path(out_path) / "dataloaders.png", dpi=fig.dpi)
 
     for n in range(1, 3):
         axs[n].set_xlabel("index")
@@ -161,7 +163,7 @@ def print_test_predictions(
     plt.show()
 
 
-def plot_param_evolution(param_history: pd.DataFrame):
+def plot_param_evolution(param_history: pd.DataFrame, out_path='.'):
     fig, axs = plt.subplots(1, 2, figsize=(14, 5))
     sns.lineplot(
         data=param_history, x="epoch", y="mean", hue="layer", ax=axs[0], legend=False
@@ -176,26 +178,78 @@ def plot_param_evolution(param_history: pd.DataFrame):
     axs[1].grid(True, alpha=0.3)
 
     plt.tight_layout()
-    return fig
-
+    plt.savefig(Path(out_path)/ "parameters.png", dpi=fig.dpi)
 
 
 @torch.no_grad()
-def evaluate_mae(model, test_loader, normalizer, device="cpu",
-                n_integration_steps=50, n_samples=10) -> torch.Tensor:
-    """MAE per feature (flow, speed, occupancy), in unità reali, su tutto il test set."""
+def evaluate_mae_per_scenario(
+    model: FlowMatchingModel, dataset: "SUMODataset", normalizer, window: int,
+    device="cpu", n_integration_steps: int=50, n_samples:int=10, batch_size: int=16,
+    feature_names: List[str] = ("flow", "speed", "occupancy"),
+) -> pd.DataFrame:
+    """MAE per feature (flow, speed, occupancy), in unità reali, per ogni scenario separatamente."""
     model.eval()
-    all_mae = []
+    collate_fn = partial(_collate_for_eval, window=window)
+    records = []
 
-    for graphs, target in test_loader:
-        graphs = [g.to(device) for g in graphs]
-        target = target.to(device)
+    for sid, (start, end) in dataset.scenario_index_ranges().items():
+        indices = list(range(start, end))
+        if not indices:
+            continue
 
-        preds = predict(model, graphs, feat_dyn_dim=3,
-                        n_integration_steps=n_integration_steps, n_samples=n_samples)
-        pred_mean_real = normalizer.inverse(preds.mean(dim=0))
-        target_real = normalizer.inverse(target)
+        loader = DataLoader(
+            Subset(dataset, indices=indices),
+            batch_size=batch_size,
+            shuffle=False,
+            collate_fn=collate_fn,
+        )
 
-        all_mae.append((pred_mean_real - target_real).abs().mean(dim=0))
+        scenario_mae = []
+        for graphs, target in loader:
+            graphs = [g.to(device) for g in graphs]
+            target = target.to(device)
+            preds = predict(
+                model, graphs, feat_dyn_dim=target.shape[-1],
+                n_integration_steps=n_integration_steps, n_samples=n_samples,
+            )
+            pred_mean_real = normalizer.inverse(preds.mean(dim=0))
+            target_real = normalizer.inverse(target)
+            scenario_mae.append((pred_mean_real - target_real).abs().mean(dim=(0, 1)))
+        if not scenario_mae:
+            continue
 
-    return torch.stack(all_mae).mean(dim=0)  # [3]
+        mae = torch.stack(scenario_mae).mean(dim=0)  # [F]
+        record = {"scenario": sid, "n_samples": len(indices)}
+        for i, fname in enumerate(feature_names[: mae.shape[0]]):
+            record[f"mae_{fname}"] = mae[i].item()
+        records.append(record)
+
+    return pd.DataFrame(records)
+
+
+def _collate_for_eval(batch: list, window: int):
+    """Stessa logica di src.utils.collate_batch, ridefinita qui per evitare
+    un import circolare (src.utils importa gia' da src.output_eval)."""
+    from torch_geometric.data import Batch
+
+    batched_graphs = []
+    for w in range(window):
+        graphs_at_w = [sample[0][w] for sample in batch]
+        batched_graphs.append(Batch.from_data_list(graphs_at_w))
+
+    targets = torch.stack([sample[1] for sample in batch], dim=0)
+    return batched_graphs, targets
+
+
+def plot_scenario_comparison(df: pd.DataFrame, out_path: Path = Path(".")) -> plt.Figure:
+    """Bar chart della MAE per scenario, una barra per feature (flow/speed/occupancy)."""
+    feature_cols = [c for c in df.columns if c.startswith("mae_")]
+    fig, ax = plt.subplots(figsize=(max(8, len(df) * 0.6), 5))
+    df.set_index("scenario")[feature_cols].plot(kind="bar", ax=ax)
+    ax.set_ylabel("MAE (unita' reali)")
+    ax.set_title("MAE per scenario, a confronto")
+    ax.grid(True, alpha=0.3, axis="y")
+    plt.xticks(rotation=45, ha="right")
+    plt.tight_layout()
+    plt.savefig(Path(out_path) / "scenario_comparison.png", dpi=fig.dpi)
+    return fig

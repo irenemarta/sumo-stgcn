@@ -9,6 +9,7 @@ dependencies = [
     "matplotlib>=3.10.9",
     "pandas>=3.0.3",
     "pyproj>=3.7.2",
+    "pytest>=9.1.1",
     "seaborn>=0.13.2",
     "sumolib>=1.27.0",
     "torch",
@@ -57,3 +58,12 @@ torchvision = [
     { index = "pytorch-cpu", extra = "cpu" },
     { index = "pytorch-cu128", extra = "cuda" },
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

@@ -1,0 +1,769 @@
+scenarios:
+- id: MA_with_TLS_baseline_seed36
+  det_dir: inputs/detectors_out/DetOut_Day_seed36_baseline
+  disturbances: []
+- id: MA_with_TLS_pos9_sev0.7_seed36
+  det_dir: inputs/detectors_out/DetOut_Day_seed36_pos9_sev0.7
+  disturbances:
+  - from: 125665632#0
+    to: 125665632#1
+    severity: 0.7
+  - from: 125665632#1
+    to: 135863195#1
+    severity: 0.7
+- id: MA_with_TLS_pos9_sev0.4_seed36
+  det_dir: inputs/detectors_out/DetOut_Day_seed36_pos9_sev0.4
+  disturbances:
+  - from: 125665632#0
+    to: 125665632#1
+    severity: 0.4
+  - from: 125665632#1
+    to: 135863195#1
+    severity: 0.4
+- id: MA_with_TLS_pos9_sev0.0_seed36
+  det_dir: inputs/detectors_out/DetOut_Day_seed36_pos9_sev0.0
+  disturbances:
+  - from: 125665632#0
+    to: 125665632#1
+    severity: 0.0
+  - from: 125665632#1
+    to: 135863195#1
+    severity: 0.0
+- id: MA_with_TLS_pos4_sev0.7_seed36
+  det_dir: inputs/detectors_out/DetOut_Day_seed36_pos4_sev0.7
+  disturbances:
+  - from: -154986395#12
+    to: 38319544#20
+    severity: 0.7
+  - from: 154986395#9
+    to: 38319544#20
+    severity: 0.7
+  - from: 38319544#18
+    to: 38319544#20
+    severity: 0.7
+  - from: 38319544#20
+    to: '-39671247'
+    severity: 0.7
+  - from: 38319544#20
+    to: 38319544#22
+    severity: 0.7
+- id: MA_with_TLS_pos4_sev0.4_seed36
+  det_dir: inputs/detectors_out/DetOut_Day_seed36_pos4_sev0.4
+  disturbances:
+  - from: -154986395#12
+    to: 38319544#20
+    severity: 0.4
+  - from: 154986395#9
+    to: 38319544#20
+    severity: 0.4
+  - from: 38319544#18
+    to: 38319544#20
+    severity: 0.4
+  - from: 38319544#20
+    to: '-39671247'
+    severity: 0.4
+  - from: 38319544#20
+    to: 38319544#22
+    severity: 0.4
+- id: MA_with_TLS_pos4_sev0.0_seed36
+  det_dir: inputs/detectors_out/DetOut_Day_seed36_pos4_sev0.0
+  disturbances:
+  - from: -154986395#12
+    to: 38319544#20
+    severity: 0.0
+  - from: 154986395#9
+    to: 38319544#20
+    severity: 0.0
+  - from: 38319544#18
+    to: 38319544#20
+    severity: 0.0
+  - from: 38319544#20
+    to: '-39671247'
+    severity: 0.0
+  - from: 38319544#20
+    to: 38319544#22
+    severity: 0.0
+- id: MA_with_TLS_baseline_seed42
+  det_dir: inputs/detectors_out/DetOut_Day_seed42_baseline
+  disturbances: []
+- id: MA_with_TLS_pos9_sev0.7_seed42
+  det_dir: inputs/detectors_out/DetOut_Day_seed42_pos9_sev0.7
+  disturbances:
+  - from: 125665632#0
+    to: 125665632#1
+    severity: 0.7
+  - from: 125665632#1
+    to: 135863195#1
+    severity: 0.7
+- id: MA_with_TLS_pos9_sev0.4_seed42
+  det_dir: inputs/detectors_out/DetOut_Day_seed42_pos9_sev0.4
+  disturbances:
+  - from: 125665632#0
+    to: 125665632#1
+    severity: 0.4
+  - from: 125665632#1
+    to: 135863195#1
+    severity: 0.4
+- id: MA_with_TLS_pos9_sev0.0_seed42
+  det_dir: inputs/detectors_out/DetOut_Day_seed42_pos9_sev0.0
+  disturbances:
+  - from: 125665632#0
+    to: 125665632#1
+    severity: 0.0
+  - from: 125665632#1
+    to: 135863195#1
+    severity: 0.0
+- id: MA_with_TLS_pos4_sev0.7_seed42
+  det_dir: inputs/detectors_out/DetOut_Day_seed42_pos4_sev0.7
+  disturbances:
+  - from: -154986395#12
+    to: 38319544#20
+    severity: 0.7
+  - from: 154986395#9
+    to: 38319544#20
+    severity: 0.7
+  - from: 38319544#18
+    to: 38319544#20
+    severity: 0.7
+  - from: 38319544#20
+    to: '-39671247'
+    severity: 0.7
+  - from: 38319544#20
+    to: 38319544#22
+    severity: 0.7
+- id: MA_with_TLS_pos4_sev0.4_seed42
+  det_dir: inputs/detectors_out/DetOut_Day_seed42_pos4_sev0.4
+  disturbances:
+  - from: -154986395#12
+    to: 38319544#20
+    severity: 0.4
+  - from: 154986395#9
+    to: 38319544#20
+    severity: 0.4
+  - from: 38319544#18
+    to: 38319544#20
+    severity: 0.4
+  - from: 38319544#20
+    to: '-39671247'
+    severity: 0.4
+  - from: 38319544#20
+    to: 38319544#22
+    severity: 0.4
+- id: MA_with_TLS_pos4_sev0.0_seed42
+  det_dir: inputs/detectors_out/DetOut_Day_seed42_pos4_sev0.0
+  disturbances:
+  - from: -154986395#12
+    to: 38319544#20
+    severity: 0.0
+  - from: 154986395#9
+    to: 38319544#20
+    severity: 0.0
+  - from: 38319544#18
+    to: 38319544#20
+    severity: 0.0
+  - from: 38319544#20
+    to: '-39671247'
+    severity: 0.0
+  - from: 38319544#20
+    to: 38319544#22
+    severity: 0.0
+- id: MA_with_TLS_baseline_seed2026
+  det_dir: inputs/detectors_out/DetOut_Day_seed2026_baseline
+  disturbances: []
+- id: MA_with_TLS_pos9_sev0.7_seed2026
+  det_dir: inputs/detectors_out/DetOut_Day_seed2026_pos9_sev0.7
+  disturbances:
+  - from: 125665632#0
+    to: 125665632#1
+    severity: 0.7
+  - from: 125665632#1
+    to: 135863195#1
+    severity: 0.7
+- id: MA_with_TLS_pos9_sev0.4_seed2026
+  det_dir: inputs/detectors_out/DetOut_Day_seed2026_pos9_sev0.4
+  disturbances:
+  - from: 125665632#0
+    to: 125665632#1
+    severity: 0.4
+  - from: 125665632#1
+    to: 135863195#1
+    severity: 0.4
+- id: MA_with_TLS_pos9_sev0.0_seed2026
+  det_dir: inputs/detectors_out/DetOut_Day_seed2026_pos9_sev0.0
+  disturbances:
+  - from: 125665632#0
+    to: 125665632#1
+    severity: 0.0
+  - from: 125665632#1
+    to: 135863195#1
+    severity: 0.0
+- id: MA_with_TLS_pos4_sev0.7_seed2026
+  det_dir: inputs/detectors_out/DetOut_Day_seed2026_pos4_sev0.7
+  disturbances:
+  - from: -154986395#12
+    to: 38319544#20
+    severity: 0.7
+  - from: 154986395#9
+    to: 38319544#20
+    severity: 0.7
+  - from: 38319544#18
+    to: 38319544#20
+    severity: 0.7
+  - from: 38319544#20
+    to: '-39671247'
+    severity: 0.7
+  - from: 38319544#20
+    to: 38319544#22
+    severity: 0.7
+- id: MA_with_TLS_pos4_sev0.4_seed2026
+  det_dir: inputs/detectors_out/DetOut_Day_seed2026_pos4_sev0.4
+  disturbances:
+  - from: -154986395#12
+    to: 38319544#20
+    severity: 0.4
+  - from: 154986395#9
+    to: 38319544#20
+    severity: 0.4
+  - from: 38319544#18
+    to: 38319544#20
+    severity: 0.4
+  - from: 38319544#20
+    to: '-39671247'
+    severity: 0.4
+  - from: 38319544#20
+    to: 38319544#22
+    severity: 0.4
+- id: MA_with_TLS_pos4_sev0.0_seed2026
+  det_dir: inputs/detectors_out/DetOut_Day_seed2026_pos4_sev0.0
+  disturbances:
+  - from: -154986395#12
+    to: 38319544#20
+    severity: 0.0
+  - from: 154986395#9
+    to: 38319544#20
+    severity: 0.0
+  - from: 38319544#18
+    to: 38319544#20
+    severity: 0.0
+  - from: 38319544#20
+    to: '-39671247'
+    severity: 0.0
+  - from: 38319544#20
+    to: 38319544#22
+    severity: 0.0
+- id: MA_with_TLS_pos9_sev0.7_seed123
+  det_dir: inputs/detectors_out/DetOut_Day_seed123_pos9_sev0.7
+  disturbances:
+  - from: 125665632#0
+    to: 125665632#1
+    severity: 0.7
+  - from: 125665632#1
+    to: 135863195#1
+    severity: 0.7
+- id: MA_with_TLS_baseline_seed123
+  det_dir: inputs/detectors_out/DetOut_Day_seed123_baseline
+  disturbances: []
+- id: MA_with_TLS_pos9_sev0.0_seed123
+  det_dir: inputs/detectors_out/DetOut_Day_seed123_pos9_sev0.0
+  disturbances:
+  - from: 125665632#0
+    to: 125665632#1
+    severity: 0.0
+  - from: 125665632#1
+    to: 135863195#1
+    severity: 0.0
+- id: MA_with_TLS_pos9_sev0.4_seed123
+  det_dir: inputs/detectors_out/DetOut_Day_seed123_pos9_sev0.4
+  disturbances:
+  - from: 125665632#0
+    to: 125665632#1
+    severity: 0.4
+  - from: 125665632#1
+    to: 135863195#1
+    severity: 0.4
+- id: MA_with_TLS_pos4_sev0.7_seed123
+  det_dir: inputs/detectors_out/DetOut_Day_seed123_pos4_sev0.7
+  disturbances:
+  - from: -154986395#12
+    to: 38319544#20
+    severity: 0.7
+  - from: 154986395#9
+    to: 38319544#20
+    severity: 0.7
+  - from: 38319544#18
+    to: 38319544#20
+    severity: 0.7
+  - from: 38319544#20
+    to: '-39671247'
+    severity: 0.7
+  - from: 38319544#20
+    to: 38319544#22
+    severity: 0.7
+- id: MA_with_TLS_pos4_sev0.4_seed123
+  det_dir: inputs/detectors_out/DetOut_Day_seed123_pos4_sev0.4
+  disturbances:
+  - from: -154986395#12
+    to: 38319544#20
+    severity: 0.4
+  - from: 154986395#9
+    to: 38319544#20
+    severity: 0.4
+  - from: 38319544#18
+    to: 38319544#20
+    severity: 0.4
+  - from: 38319544#20
+    to: '-39671247'
+    severity: 0.4
+  - from: 38319544#20
+    to: 38319544#22
+    severity: 0.4
+- id: MA_with_TLS_pos4_sev0.0_seed123
+  det_dir: inputs/detectors_out/DetOut_Day_seed123_pos4_sev0.0
+  disturbances:
+  - from: -154986395#12
+    to: 38319544#20
+    severity: 0.0
+  - from: 154986395#9
+    to: 38319544#20
+    severity: 0.0
+  - from: 38319544#18
+    to: 38319544#20
+    severity: 0.0
+  - from: 38319544#20
+    to: '-39671247'
+    severity: 0.0
+  - from: 38319544#20
+    to: 38319544#22
+    severity: 0.0
+- id: MA_with_TLS_pos_prio9b_sev0.7_seed42
+  det_dir: inputs/detectors_out/DetOut_Day_seed42_pos_prio9b_sev0.7
+  disturbances:
+  - from: '-1307179596'
+    to: '1307179596'
+    severity: 0.7
+  - from: 1307179597#0
+    to: '1307179596'
+    severity: 0.7
+  - from: '1307179596'
+    to: '-1307179596'
+    severity: 0.7
+  - from: '1307179596'
+    to: 37756577#0
+    severity: 0.7
+- id: MA_with_TLS_pos_prio9b_sev0.4_seed42
+  det_dir: inputs/detectors_out/DetOut_Day_seed42_pos_prio9b_sev0.4
+  disturbances:
+  - from: '-1307179596'
+    to: '1307179596'
+    severity: 0.4
+  - from: 1307179597#0
+    to: '1307179596'
+    severity: 0.4
+  - from: '1307179596'
+    to: '-1307179596'
+    severity: 0.4
+  - from: '1307179596'
+    to: 37756577#0
+    severity: 0.4
+- id: MA_with_TLS_pos_prio9b_sev0.0_seed42
+  det_dir: inputs/detectors_out/DetOut_Day_seed42_pos_prio9b_sev0.0
+  disturbances:
+  - from: '-1307179596'
+    to: '1307179596'
+    severity: 0.0
+  - from: 1307179597#0
+    to: '1307179596'
+    severity: 0.0
+  - from: '1307179596'
+    to: '-1307179596'
+    severity: 0.0
+  - from: '1307179596'
+    to: 37756577#0
+    severity: 0.0
+- id: MA_with_TLS_pos_prio3_sev0.7_seed42
+  det_dir: inputs/detectors_out/DetOut_Day_seed42_pos_prio3_sev0.7
+  disturbances:
+  - from: 1305446509#4
+    to: 1305446509#5
+    severity: 0.7
+  - from: 1305446509#5
+    to: 1305446509#7
+    severity: 0.7
+- id: MA_with_TLS_pos_prio3_sev0.4_seed42
+  det_dir: inputs/detectors_out/DetOut_Day_seed42_pos_prio3_sev0.4
+  disturbances:
+  - from: 1305446509#4
+    to: 1305446509#5
+    severity: 0.4
+  - from: 1305446509#5
+    to: 1305446509#7
+    severity: 0.4
+- id: MA_with_TLS_pos_prio3_sev0.0_seed42
+  det_dir: inputs/detectors_out/DetOut_Day_seed42_pos_prio3_sev0.0
+  disturbances:
+  - from: 1305446509#4
+    to: 1305446509#5
+    severity: 0.0
+  - from: 1305446509#5
+    to: 1305446509#7
+    severity: 0.0
+- id: MA_with_TLS_pos_prio7b_sev0.7_seed42
+  det_dir: inputs/detectors_out/DetOut_Day_seed42_pos_prio7b_sev0.7
+  disturbances:
+  - from: -110531712#0
+    to: 121952564#4
+    severity: 0.7
+  - from: 121952564#2
+    to: 121952564#4
+    severity: 0.7
+  - from: 121952564#4
+    to: 121952564#5
+    severity: 0.7
+- id: MA_with_TLS_pos_prio7b_sev0.4_seed42
+  det_dir: inputs/detectors_out/DetOut_Day_seed42_pos_prio7b_sev0.4
+  disturbances:
+  - from: -110531712#0
+    to: 121952564#4
+    severity: 0.4
+  - from: 121952564#2
+    to: 121952564#4
+    severity: 0.4
+  - from: 121952564#4
+    to: 121952564#5
+    severity: 0.4
+- id: MA_with_TLS_pos_prio7b_sev0.0_seed42
+  det_dir: inputs/detectors_out/DetOut_Day_seed42_pos_prio7b_sev0.0
+  disturbances:
+  - from: -110531712#0
+    to: 121952564#4
+    severity: 0.0
+  - from: 121952564#2
+    to: 121952564#4
+    severity: 0.0
+  - from: 121952564#4
+    to: 121952564#5
+    severity: 0.0
+- id: MA_with_TLS_pos_prio9b_sev0.7_seed2026
+  det_dir: inputs/detectors_out/DetOut_Day_seed2026_pos_prio9b_sev0.7
+  disturbances:
+  - from: '-1307179596'
+    to: '1307179596'
+    severity: 0.7
+  - from: 1307179597#0
+    to: '1307179596'
+    severity: 0.7
+  - from: '1307179596'
+    to: '-1307179596'
+    severity: 0.7
+  - from: '1307179596'
+    to: 37756577#0
+    severity: 0.7
+- id: MA_with_TLS_pos_prio9b_sev0.4_seed2026
+  det_dir: inputs/detectors_out/DetOut_Day_seed2026_pos_prio9b_sev0.4
+  disturbances:
+  - from: '-1307179596'
+    to: '1307179596'
+    severity: 0.4
+  - from: 1307179597#0
+    to: '1307179596'
+    severity: 0.4
+  - from: '1307179596'
+    to: '-1307179596'
+    severity: 0.4
+  - from: '1307179596'
+    to: 37756577#0
+    severity: 0.4
+- id: MA_with_TLS_pos_prio9b_sev0.0_seed2026
+  det_dir: inputs/detectors_out/DetOut_Day_seed2026_pos_prio9b_sev0.0
+  disturbances:
+  - from: '-1307179596'
+    to: '1307179596'
+    severity: 0.0
+  - from: 1307179597#0
+    to: '1307179596'
+    severity: 0.0
+  - from: '1307179596'
+    to: '-1307179596'
+    severity: 0.0
+  - from: '1307179596'
+    to: 37756577#0
+    severity: 0.0
+- id: MA_with_TLS_pos_prio3_sev0.7_seed2026
+  det_dir: inputs/detectors_out/DetOut_Day_seed2026_pos_prio3_sev0.7
+  disturbances:
+  - from: 1305446509#4
+    to: 1305446509#5
+    severity: 0.7
+  - from: 1305446509#5
+    to: 1305446509#7
+    severity: 0.7
+- id: MA_with_TLS_pos_prio3_sev0.4_seed2026
+  det_dir: inputs/detectors_out/DetOut_Day_seed2026_pos_prio3_sev0.4
+  disturbances:
+  - from: 1305446509#4
+    to: 1305446509#5
+    severity: 0.4
+  - from: 1305446509#5
+    to: 1305446509#7
+    severity: 0.4
+- id: MA_with_TLS_pos_prio3_sev0.0_seed2026
+  det_dir: inputs/detectors_out/DetOut_Day_seed2026_pos_prio3_sev0.0
+  disturbances:
+  - from: 1305446509#4
+    to: 1305446509#5
+    severity: 0.0
+  - from: 1305446509#5
+    to: 1305446509#7
+    severity: 0.0
+- id: MA_with_TLS_pos_prio7b_sev0.7_seed2026
+  det_dir: inputs/detectors_out/DetOut_Day_seed2026_pos_prio7b_sev0.7
+  disturbances:
+  - from: -110531712#0
+    to: 121952564#4
+    severity: 0.7
+  - from: 121952564#2
+    to: 121952564#4
+    severity: 0.7
+  - from: 121952564#4
+    to: 121952564#5
+    severity: 0.7
+- id: MA_with_TLS_pos_prio7b_sev0.4_seed2026
+  det_dir: inputs/detectors_out/DetOut_Day_seed2026_pos_prio7b_sev0.4
+  disturbances:
+  - from: -110531712#0
+    to: 121952564#4
+    severity: 0.4
+  - from: 121952564#2
+    to: 121952564#4
+    severity: 0.4
+  - from: 121952564#4
+    to: 121952564#5
+    severity: 0.4
+- id: MA_with_TLS_pos_prio7b_sev0.0_seed2026
+  det_dir: inputs/detectors_out/DetOut_Day_seed2026_pos_prio7b_sev0.0
+  disturbances:
+  - from: -110531712#0
+    to: 121952564#4
+    severity: 0.0
+  - from: 121952564#2
+    to: 121952564#4
+    severity: 0.0
+  - from: 121952564#4
+    to: 121952564#5
+    severity: 0.0
+- id: MA_with_TLS_pos_prio9b_sev0.7_seed36
+  det_dir: inputs/detectors_out/DetOut_Day_seed36_pos_prio9b_sev0.7
+  disturbances:
+  - from: '-1307179596'
+    to: '1307179596'
+    severity: 0.7
+  - from: 1307179597#0
+    to: '1307179596'
+    severity: 0.7
+  - from: '1307179596'
+    to: '-1307179596'
+    severity: 0.7
+  - from: '1307179596'
+    to: 37756577#0
+    severity: 0.7
+- id: MA_with_TLS_pos_prio9b_sev0.4_seed36
+  det_dir: inputs/detectors_out/DetOut_Day_seed36_pos_prio9b_sev0.4
+  disturbances:
+  - from: '-1307179596'
+    to: '1307179596'
+    severity: 0.4
+  - from: 1307179597#0
+    to: '1307179596'
+    severity: 0.4
+  - from: '1307179596'
+    to: '-1307179596'
+    severity: 0.4
+  - from: '1307179596'
+    to: 37756577#0
+    severity: 0.4
+- id: MA_with_TLS_pos_prio9b_sev0.0_seed36
+  det_dir: inputs/detectors_out/DetOut_Day_seed36_pos_prio9b_sev0.0
+  disturbances:
+  - from: '-1307179596'
+    to: '1307179596'
+    severity: 0.0
+  - from: 1307179597#0
+    to: '1307179596'
+    severity: 0.0
+  - from: '1307179596'
+    to: '-1307179596'
+    severity: 0.0
+  - from: '1307179596'
+    to: 37756577#0
+    severity: 0.0
+- id: MA_with_TLS_pos_prio3_sev0.7_seed36
+  det_dir: inputs/detectors_out/DetOut_Day_seed36_pos_prio3_sev0.7
+  disturbances:
+  - from: 1305446509#4
+    to: 1305446509#5
+    severity: 0.7
+  - from: 1305446509#5
+    to: 1305446509#7
+    severity: 0.7
+- id: MA_with_TLS_pos_prio3_sev0.4_seed36
+  det_dir: inputs/detectors_out/DetOut_Day_seed36_pos_prio3_sev0.4
+  disturbances:
+  - from: 1305446509#4
+    to: 1305446509#5
+    severity: 0.4
+  - from: 1305446509#5
+    to: 1305446509#7
+    severity: 0.4
+- id: MA_with_TLS_pos_prio3_sev0.0_seed36
+  det_dir: inputs/detectors_out/DetOut_Day_seed36_pos_prio3_sev0.0
+  disturbances:
+  - from: 1305446509#4
+    to: 1305446509#5
+    severity: 0.0
+  - from: 1305446509#5
+    to: 1305446509#7
+    severity: 0.0
+- id: MA_with_TLS_pos_prio7b_sev0.7_seed36
+  det_dir: inputs/detectors_out/DetOut_Day_seed36_pos_prio7b_sev0.7
+  disturbances:
+  - from: -110531712#0
+    to: 121952564#4
+    severity: 0.7
+  - from: 121952564#2
+    to: 121952564#4
+    severity: 0.7
+  - from: 121952564#4
+    to: 121952564#5
+    severity: 0.7
+- id: MA_with_TLS_pos_prio7b_sev0.4_seed36
+  det_dir: inputs/detectors_out/DetOut_Day_seed36_pos_prio7b_sev0.4
+  disturbances:
+  - from: -110531712#0
+    to: 121952564#4
+    severity: 0.4
+  - from: 121952564#2
+    to: 121952564#4
+    severity: 0.4
+  - from: 121952564#4
+    to: 121952564#5
+    severity: 0.4
+- id: MA_with_TLS_pos_prio7b_sev0.0_seed36
+  det_dir: inputs/detectors_out/DetOut_Day_seed36_pos_prio7b_sev0.0
+  disturbances:
+  - from: -110531712#0
+    to: 121952564#4
+    severity: 0.0
+  - from: 121952564#2
+    to: 121952564#4
+    severity: 0.0
+  - from: 121952564#4
+    to: 121952564#5
+    severity: 0.0
+- id: MA_with_TLS_pos_prio9b_sev0.7_seed123
+  det_dir: inputs/detectors_out/DetOut_Day_seed123_pos_prio9b_sev0.7
+  disturbances:
+  - from: '-1307179596'
+    to: '1307179596'
+    severity: 0.7
+  - from: 1307179597#0
+    to: '1307179596'
+    severity: 0.7
+  - from: '1307179596'
+    to: '-1307179596'
+    severity: 0.7
+  - from: '1307179596'
+    to: 37756577#0
+    severity: 0.7
+- id: MA_with_TLS_pos_prio9b_sev0.4_seed123
+  det_dir: inputs/detectors_out/DetOut_Day_seed123_pos_prio9b_sev0.4
+  disturbances:
+  - from: '-1307179596'
+    to: '1307179596'
+    severity: 0.4
+  - from: 1307179597#0
+    to: '1307179596'
+    severity: 0.4
+  - from: '1307179596'
+    to: '-1307179596'
+    severity: 0.4
+  - from: '1307179596'
+    to: 37756577#0
+    severity: 0.4
+- id: MA_with_TLS_pos_prio9b_sev0.0_seed123
+  det_dir: inputs/detectors_out/DetOut_Day_seed123_pos_prio9b_sev0.0
+  disturbances:
+  - from: '-1307179596'
+    to: '1307179596'
+    severity: 0.0
+  - from: 1307179597#0
+    to: '1307179596'
+    severity: 0.0
+  - from: '1307179596'
+    to: '-1307179596'
+    severity: 0.0
+  - from: '1307179596'
+    to: 37756577#0
+    severity: 0.0
+- id: MA_with_TLS_pos_prio3_sev0.7_seed123
+  det_dir: inputs/detectors_out/DetOut_Day_seed123_pos_prio3_sev0.7
+  disturbances:
+  - from: 1305446509#4
+    to: 1305446509#5
+    severity: 0.7
+  - from: 1305446509#5
+    to: 1305446509#7
+    severity: 0.7
+- id: MA_with_TLS_pos_prio3_sev0.4_seed123
+  det_dir: inputs/detectors_out/DetOut_Day_seed123_pos_prio3_sev0.4
+  disturbances:
+  - from: 1305446509#4
+    to: 1305446509#5
+    severity: 0.4
+  - from: 1305446509#5
+    to: 1305446509#7
+    severity: 0.4
+- id: MA_with_TLS_pos_prio3_sev0.0_seed123
+  det_dir: inputs/detectors_out/DetOut_Day_seed123_pos_prio3_sev0.0
+  disturbances:
+  - from: 1305446509#4
+    to: 1305446509#5
+    severity: 0.0
+  - from: 1305446509#5
+    to: 1305446509#7
+    severity: 0.0
+- id: MA_with_TLS_pos_prio7b_sev0.7_seed123
+  det_dir: inputs/detectors_out/DetOut_Day_seed123_pos_prio7b_sev0.7
+  disturbances:
+  - from: -110531712#0
+    to: 121952564#4
+    severity: 0.7
+  - from: 121952564#2
+    to: 121952564#4
+    severity: 0.7
+  - from: 121952564#4
+    to: 121952564#5
+    severity: 0.7
+- id: MA_with_TLS_pos_prio7b_sev0.0_seed123
+  det_dir: inputs/detectors_out/DetOut_Day_seed123_pos_prio7b_sev0.0
+  disturbances:
+  - from: -110531712#0
+    to: 121952564#4
+    severity: 0.0
+  - from: 121952564#2
+    to: 121952564#4
+    severity: 0.0
+  - from: 121952564#4
+    to: 121952564#5
+    severity: 0.0
+- id: MA_with_TLS_pos_prio7b_sev0.4_seed123
+  det_dir: inputs/detectors_out/DetOut_Day_seed123_pos_prio7b_sev0.4
+  disturbances:
+  - from: -110531712#0
+    to: 121952564#4
+    severity: 0.4
+  - from: 121952564#2
+    to: 121952564#4
+    severity: 0.4
+  - from: 121952564#4
+    to: 121952564#5
+    severity: 0.4

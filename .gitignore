@@ -4,4 +4,7 @@ __pycache__
 input
 data/built_dataset
 TXT
+inputs/detectors_out
+inputs/detectors_out_NO
+inputs/detectors_out_ok
 inputs/DetOut_Day_seed42

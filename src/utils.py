@@ -1,4 +1,4 @@
-import os
+import os, json
 from tqdm import tqdm
 from typing import Callable, Dict, List, Optional, Tuple
 
@@ -71,7 +71,7 @@ def dataset_split(
     train_idx, val_idx, test_idx = [], [], []
     
     for sid, (start, end) in dataset.scenario_index_ranges().items():
-        n_total = len(dataset)
+        n_total = end - start
         train_end = int(n_total * train_fraction)
         validation_end = train_end + int(n_total * val_fraction)
 
@@ -127,19 +127,13 @@ def eval(model: FlowMatchingModel, loader: DataLoader, device: str = "cpu"):
 # training set = 60%
 # validation set = 20%
 # test set = 20%
-def run_training(
-    model: FlowMatchingModel,
-    train_loader: DataLoader,
-    val_loader: DataLoader,
-    optimizer,
-    num_epochs: int,
-    checkpoint_path: str,
-    print_every: int = 100,
-    device: str = "cpu",
-    params_tracker: Optional[Callable[[FlowMatchingModel, int], None]] = None,
-    # Callable[[function], ReturnType]
-) -> Dict[str, List[float]]:
+import json  # in testa al file, se non già importato
 
+def run_training(
+    model, train_loader, val_loader, optimizer, num_epochs, checkpoint_path,
+    print_every=100, device="cpu", params_tracker=None,
+    history_path: Optional[str] = None,
+):
     model.to(device)
     os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True)
     best_val_loss = float("inf")
@@ -159,11 +153,12 @@ def run_training(
             best_val_loss = val_loss
             torch.save(model.state_dict(), checkpoint_path)
 
+        if history_path is not None:
+            with open(history_path, "w") as f:
+                json.dump(loss_history, f)
+
         if e % print_every == 0:
-            print(
-                f"Epoch: {e} | Train Loss: {train_loss:.4f} | Val Loss: {val_loss:.4f}"
-            )
-            # print_test_predictions(e, model, )
+            print(f"Epoch: {e} | Train Loss: {train_loss:.4f} | Val Loss: {val_loss:.4f}")
 
     return loss_history
 
